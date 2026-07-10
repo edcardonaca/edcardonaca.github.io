@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Proyecto 01 — Correlación Commodities Energéticos vs. Cartera | Edwin Cardona</title>
+  <meta name="description" content="Análisis de correlación entre commodities energéticos y una cartera de activos: regresión OLS, correlación rolling y dashboard interactivo en Power BI.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --morado:       #534AB7;
+      --morado-mid:   #7F77DD;
+      --morado-light: #E1DFFE;
+      --morado-bg:    #F5F4FF;
+      --texto:        #1A1A1A;
+      --muted:        #6B6B6B;
+      --borde:        #E4E4E7;
+      --blanco:       #FFFFFF;
+      --fondo:        #FAFAFA;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--fondo);
+      color: var(--texto);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      background: rgba(250,250,250,0.88);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--borde);
+      padding: 0 2rem;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-logo {
+      font-weight: 700;
+      font-size: 15px;
+      color: var(--morado);
+      letter-spacing: -0.3px;
+      text-decoration: none;
+    }
+
+    .nav-back {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--muted);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: .4rem;
+      transition: color .2s;
+    }
+
+    .nav-back:hover { color: var(--morado); }
+
+    main {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 120px 2rem 5rem;
+    }
+
+    .project-num {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--morado);
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+    }
+
+    .project-num::before {
+      content: '';
+      display: inline-block;
+      width: 24px;
+      height: 2px;
+      background: var(--morado);
+    }
+
+    h1 {
+      font-size: clamp(1.8rem, 4.5vw, 2.6rem);
+      font-weight: 700;
+      letter-spacing: -1px;
+      line-height: 1.15;
+      color: var(--texto);
+      margin-bottom: 1.25rem;
+    }
+
+    .project-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .4rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .project-tag {
+      font-size: .75rem;
+      font-weight: 500;
+      padding: .2rem .55rem;
+      border-radius: 5px;
+      background: #F4F4F5;
+      color: #52525B;
+      border: 1px solid var(--borde);
+    }
+
+    .result-banner {
+      display: inline-flex;
+      align-items: center;
+      gap: .4rem;
+      font-size: .9rem;
+      font-weight: 600;
+      color: var(--morado);
+      background: var(--morado-bg);
+      border: 1px solid var(--morado-light);
+      border-radius: 8px;
+      padding: .6rem 1rem;
+      margin-bottom: 3rem;
+    }
+
+    section { margin-bottom: 3rem; }
+
+    .section-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--morado);
+      margin-bottom: .75rem;
+    }
+
+    section p {
+      font-size: .97rem;
+      color: var(--muted);
+      line-height: 1.8;
+      margin-bottom: 1rem;
+    }
+
+    section p:last-child { margin-bottom: 0; }
+
+    section strong { color: var(--texto); font-weight: 600; }
+
+    .metodologia-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: .75rem;
+    }
+
+    .metodologia-list li {
+      font-size: .95rem;
+      color: var(--muted);
+      line-height: 1.7;
+      padding-left: 1.25rem;
+      position: relative;
+    }
+
+    .metodologia-list li::before {
+      content: '→';
+      position: absolute;
+      left: 0;
+      color: var(--morado-mid);
+      font-size: .85rem;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+    }
+
+    .stat-item {
+      padding: 1.25rem;
+      background: var(--blanco);
+      border: 1px solid var(--borde);
+      border-radius: 10px;
+    }
+
+    .stat-num {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--morado);
+      letter-spacing: -1px;
+      line-height: 1;
+      margin-bottom: .25rem;
+    }
+
+    .stat-lbl {
+      font-size: .78rem;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    .dashboard-frame {
+      position: relative;
+      width: 100%;
+      padding-top: 62.25%; /* proporción 600 x 373.5 */
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--borde);
+      background: var(--blanco);
+    }
+
+    .dashboard-frame iframe {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+
+    .dashboard-note {
+      font-size: .82rem;
+      color: var(--muted);
+      margin-top: .75rem;
+    }
+
+    .cta-row {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      padding-top: 1rem;
+      border-top: 1px solid var(--borde);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: .4rem;
+      padding: .65rem 1.25rem;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all .2s;
+      cursor: pointer;
+      border: none;
+    }
+
+    .btn-primary {
+      background: var(--morado);
+      color: var(--blanco);
+    }
+
+    .btn-primary:hover {
+      background: #443EA3;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 14px rgba(83,74,183,.3);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--morado);
+      border: 1.5px solid var(--morado-light);
+    }
+
+    .btn-ghost:hover {
+      background: var(--morado-bg);
+      border-color: var(--morado);
+    }
+
+    footer {
+      background: var(--texto);
+      color: #A1A1AA;
+      padding: 2.5rem 2rem;
+      text-align: center;
+      font-size: .8rem;
+    }
+
+    footer a {
+      color: #A1A1AA;
+      text-decoration: none;
+    }
+
+    footer a:hover { color: var(--blanco); }
+
+    @media (max-width: 680px) {
+      .stats-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="../" class="nav-logo">EC →</a>
+    <a href="../#proyectos" class="nav-back">← Volver al portafolio</a>
+  </nav>
+
+  <main>
+    <div class="project-num">Proyecto 01</div>
+    <h1>Análisis de Correlación: Commodities Energéticos vs. Cartera de Activos</h1>
+    <div class="project-tags">
+      <span class="project-tag">Python</span>
+      <span class="project-tag">pandas</span>
+      <span class="project-tag">scipy</span>
+      <span class="project-tag">statsmodels</span>
+      <span class="project-tag">Power BI</span>
+      <span class="project-tag">DAX</span>
+      <span class="project-tag">yfinance</span>
+    </div>
+    <div class="result-banner">→ Impacto total estimado: −3.45% ante WTI −10%</div>
+
+    <section>
+      <div class="section-label">Contexto</div>
+      <p>
+        Una cartera diversificada rara vez está aislada de los movimientos del mercado energético,
+        incluso cuando no contiene activos petroleros de forma directa. La pregunta que guía este
+        proyecto es simple pero relevante para cualquier gestor de riesgo:
+        <strong>¿cuánto pierde una cartera diversificada si el WTI cae un 10%?</strong>
+      </p>
+      <p>
+        Para responderla, construí un pipeline de análisis end-to-end sobre <strong>1,509 días de datos</strong>
+        de precios diarios, combinando estadística inferencial, modelos de regresión y un simulador
+        interactivo que traduce los resultados técnicos en algo accionable.
+      </p>
+    </section>
+
+    <section>
+      <div class="section-label">Metodología</div>
+      <ul class="metodologia-list">
+        <li>Extracción de precios históricos diarios vía <strong>yfinance</strong> para el WTI y los 7 activos de la cartera.</li>
+        <li>Cálculo de <strong>correlación de Pearson</strong> entre retornos diarios del WTI y cada activo, con prueba de significancia estadística.</li>
+        <li><strong>Regresión OLS</strong> para estimar la sensibilidad (beta) de cada activo ante variaciones del WTI.</li>
+        <li><strong>Correlación rolling de 90 días</strong> para detectar cómo cambia la relación en el tiempo, incluyendo el efecto distorsionador del crash de 2020.</li>
+        <li>Simulador what-if interactivo en <strong>Power BI / DAX</strong> que proyecta el impacto en cartera ante distintos escenarios de caída del WTI.</li>
+      </ul>
+    </section>
+
+    <section>
+      <div class="section-label">Resultados</div>
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div class="stat-num">1,509</div>
+          <div class="stat-lbl">días de datos analizados</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">−3.45%</div>
+          <div class="stat-lbl">impacto estimado en cartera ante WTI −10%</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">7 / 7</div>
+          <div class="stat-lbl">activos con correlación estadísticamente significativa (p &lt; 0.05)</div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-label">Dashboard interactivo</div>
+      <p>Explora el simulador what-if directamente aquí — ajusta el escenario de caída del WTI y observa el impacto proyectado en cada activo de la cartera.</p>
+      <div class="dashboard-frame">
+        <iframe title="pp" src="https://app.powerbi.com/view?r=eyJrIjoiYjQzNDdkNjItMGJmNi00MTNkLTg1ODItMmZiOGM1OWJlZTk5IiwidCI6IjU3N2ZjMWQ4LTA5MjItNDU4ZS04N2JmLWVjNGY0NTVlYjYwMCIsImMiOjR9" frameborder="0" allowFullScreen="true"></iframe>
+      </div>
+      <div class="dashboard-note">Si el dashboard no carga, puede deberse a los permisos de uso compartido del reporte en Power BI.</div>
+    </section>
+
+    <div class="cta-row">
+      <a href="https://github.com/edcardonaca/wti-portfolio-correlation" target="_blank" class="btn btn-primary">Ver código en GitHub →</a>
+      <a href="../#proyectos" class="btn btn-ghost">← Volver a proyectos</a>
+    </div>
+  </main>
+
+  <footer>
+    <a href="../">Edwin Cardona Cañaveral</a> · Portafolio de Data Analytics
+  </footer>
+
+</body>
+</html>
