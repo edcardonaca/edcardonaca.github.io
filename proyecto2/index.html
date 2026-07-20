@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Proyecto 02 — Análisis de Funnel y Canales | Edwin Cardona</title>
+<meta name="description" content="Análisis de marketing y conversión con SQL sobre el dataset Maven Fuzzy Factory: funnel de conversión, canales de adquisición y rentabilidad.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --morado: #534AB7;
+  --morado-mid: #7F77DD;
+  --morado-light: #E1DFFE;
+  --morado-bg: #F5F4FF;
+  --texto: #1A1A1A;
+  --muted: #6B6B6B;
+  --borde: #E4E4E7;
+  --blanco: #FFFFFF;
+  --fondo: #FAFAFA;
+}
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--fondo);
+  color: var(--texto);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  background: rgba(250,250,250,0.88);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--borde);
+  padding: 0 2rem;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.nav-logo {
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--morado);
+  letter-spacing: -0.3px;
+  text-decoration: none;
+}
+.nav-back {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color .2s;
+}
+.nav-back:hover { color: var(--morado); }
+
+main {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 100px 2rem 5rem;
+}
+.project-eyebrow {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--morado);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+}
+.project-eyebrow::before {
+  content: '';
+  display: inline-block;
+  width: 24px;
+  height: 2px;
+  background: var(--morado);
+}
+h1 {
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  font-weight: 700;
+  letter-spacing: -1px;
+  line-height: 1.15;
+  margin-bottom: 1rem;
+}
+.project-sub {
+  font-size: 1.05rem;
+  color: var(--muted);
+  max-width: 600px;
+  margin-bottom: 2rem;
+}
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+  margin-bottom: 3rem;
+}
+.tag {
+  font-size: .8rem;
+  font-weight: 500;
+  padding: .3rem .7rem;
+  border-radius: 6px;
+  background: var(--morado-bg);
+  color: var(--morado);
+  border: 1px solid var(--morado-light);
+}
+h2 {
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: -0.4px;
+  margin: 3rem 0 1rem;
+}
+p {
+  color: var(--muted);
+  font-size: .97rem;
+  margin-bottom: 1rem;
+  max-width: 680px;
+}
+p strong { color: var(--texto); font-weight: 600; }
+
+.kpi-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  margin: 1.5rem 0 2.5rem;
+}
+.kpi {
+  padding: 1.1rem;
+  background: var(--blanco);
+  border: 1px solid var(--borde);
+  border-radius: 10px;
+  text-align: center;
+}
+.kpi-num {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--morado);
+  letter-spacing: -0.5px;
+}
+.kpi-lbl {
+  font-size: .72rem;
+  color: var(--muted);
+  margin-top: .25rem;
+}
+
+.dashboard-frame {
+  width: 100%;
+  border: 1px solid var(--borde);
+  border-radius: 14px;
+  overflow: hidden;
+  margin-bottom: .75rem;
+  background: var(--blanco);
+}
+.dashboard-frame iframe {
+  width: 100%;
+  height: 520px;
+  display: block;
+  border: none;
+}
+.dashboard-caption {
+  font-size: .8rem;
+  color: var(--muted);
+  margin-bottom: 2.5rem;
+}
+
+.findings {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 2.5rem;
+}
+.findings li {
+  font-size: .95rem;
+  color: var(--muted);
+  line-height: 1.7;
+  padding-left: 1.4rem;
+  position: relative;
+  max-width: 680px;
+}
+.findings li::before {
+  content: '→';
+  position: absolute;
+  left: 0;
+  color: var(--morado);
+  font-weight: 700;
+}
+.findings li strong { color: var(--texto); }
+
+.cta-row {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 2.5rem;
+}
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  padding: .65rem 1.25rem;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all .2s;
+}
+.btn-primary {
+  background: var(--morado);
+  color: var(--blanco);
+}
+.btn-primary:hover {
+  background: #443EA3;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(83,74,183,.3);
+}
+.btn-ghost {
+  background: transparent;
+  color: var(--morado);
+  border: 1.5px solid var(--morado-light);
+}
+.btn-ghost:hover {
+  background: var(--morado-bg);
+  border-color: var(--morado);
+}
+
+@media (max-width: 680px) {
+  .kpi-row { grid-template-columns: repeat(2, 1fr); }
+  .dashboard-frame iframe { height: 400px; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="../" class="nav-logo">EC →</a>
+  <a href="../#proyectos" class="nav-back">← Volver al portafolio</a>
+</nav>
+
+<main>
+  <div class="project-eyebrow">Proyecto 02</div>
+  <h1>Análisis de Funnel y Canales de Marketing</h1>
+  <p class="project-sub">
+    ¿Dónde pierde clientes un e-commerce en el camino a la compra, y qué canal de marketing
+    realmente convierte? Análisis end-to-end con SQL sobre el dataset Maven Fuzzy Factory:
+    9 queries de negocio, funnel de conversión con window functions y dashboard interactivo en Power BI.
+  </p>
+  <div class="tags">
+    <span class="tag">SQL</span>
+    <span class="tag">DuckDB</span>
+    <span class="tag">Window Functions</span>
+    <span class="tag">Power BI</span>
+    <span class="tag">Python</span>
+    <span class="tag">Marketing Analytics</span>
+  </div>
+
+  <div class="kpi-row">
+    <div class="kpi">
+      <div class="kpi-num">6.83%</div>
+      <div class="kpi-lbl">Conversión general</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-num">62.74%</div>
+      <div class="kpi-lbl">Margen promedio</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-num">-54.83%</div>
+      <div class="kpi-lbl">Mayor caída del funnel</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-num">472,871</div>
+      <div class="kpi-lbl">Sesiones analizadas</div>
+    </div>
+  </div>
+
+  <h2>Dashboard interactivo</h2>
+  <div class="dashboard-frame">
+    <iframe title="Dashboard de funnel y canales"
+      src="https://app.powerbi.com/view?r=eyJrIjoiODMyNDY1ZjgtYTEzMi00NGRkLWFmZGQtODE0ZmI3MTFhMzYwIiwidCI6IjU3N2ZjMWQ4LTA5MjItNDU4ZS04N2JmLWVjNGY0NTVlYjYwMCIsImMiOjR9"
+      frameborder="0" allowFullScreen="true"></iframe>
+  </div>
+  <div class="dashboard-caption">Embudo de conversión (7 pasos) y comparación de tasa de conversión por canal de marketing.</div>
+
+  <h2>Hallazgos clave</h2>
+  <ul class="findings">
+    <li><strong>El mayor cuello de botella está en la página de producto, no en el checkout:</strong> la caída más grande de todo el funnel ocurre entre ver un producto específico y agregarlo al carrito (-54.83%). Más de la mitad de los interesados nunca llegan al carrito.</li>
+    <li><strong>El canal con más tráfico no es el que mejor convierte:</strong> gsearch trae el 67% de las sesiones pero convierte al 6.75%; el tráfico directo convierte mejor (7.34%) con 4 veces menos volumen.</li>
+    <li><strong>Mobile convierte 3 veces peor que desktop</strong> (3.09% vs. 8.50%), a pesar de representar el 31% del tráfico total — señal de fricción real en la experiencia de compra mobile.</li>
+    <li><strong>La rentabilidad no siempre sigue al volumen de ventas:</strong> un producto con menos unidades vendidas generó casi $80,000 más en ingresos que otro con mayor volumen.</li>
+  </ul>
+
+  <div class="cta-row">
+    <a href="https://github.com/edcardonaca/sql-marketing-funnel-analysis" target="_blank" class="btn btn-primary">Ver repositorio en GitHub →</a>
+    <a href="../#proyectos" class="btn btn-ghost">← Volver a proyectos</a>
+  </div>
+</main>
+
+</body>
+</html>
