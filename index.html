@@ -78,7 +78,7 @@
       display: flex;
       align-items: center;
       padding: 80px 2rem 4rem;
-      max-width: 860px;
+      max-width: 1120px;
       margin: 0 auto;
     }
 
@@ -193,7 +193,7 @@
 
     /* ── SECCIONES ────────────────────────────── */
     section {
-      max-width: 860px;
+      max-width: 1120px;
       margin: 0 auto;
       padding: 5rem 2rem;
     }
@@ -226,15 +226,15 @@
       width: 100%;
       height: 1px;
       background: var(--borde);
-      max-width: 860px;
+      max-width: 1120px;
       margin: 0 auto;
     }
 
     /* ── SOBRE MÍ ─────────────────────────────── */
     .sobre-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 3rem;
+      grid-template-columns: 1.3fr 1fr;
+      gap: 4rem;
       align-items: start;
     }
 
@@ -354,9 +354,10 @@
 
     /* ── PROYECTOS ────────────────────────────── */
     .projects-list {
-      display: flex;
-      flex-direction: column;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(440px, 1fr));
       gap: 1.5rem;
+      align-items: start;
     }
 
     /* ── CARD de proyecto ─────────────────────── */
