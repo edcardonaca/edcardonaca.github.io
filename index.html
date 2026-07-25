@@ -271,6 +271,34 @@
       margin-bottom: .25rem;
     }
 
+    .stat-link {
+      display: block;
+      text-decoration: none;
+      transition: border-color .2s, transform .2s;
+    }
+
+    .stat-link:hover {
+      border-color: var(--morado);
+      transform: translateX(2px);
+    }
+
+    .stat-proj-num {
+      font-size: .75rem;
+      font-weight: 700;
+      letter-spacing: .08em;
+      color: var(--morado-mid);
+      margin-bottom: .35rem;
+    }
+
+    .stat-proj-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--texto);
+      letter-spacing: -.2px;
+      line-height: 1.3;
+      margin-bottom: .3rem;
+    }
+
     .stat-lbl {
       font-size: .8rem;
       color: var(--muted);
@@ -282,7 +310,7 @@
 
     .skills-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
       gap: 1.5rem;
     }
 
@@ -621,7 +649,7 @@
       </div>
       <p class="hero-desc">
         Ingeniero con background en energía, automatización y análisis cuantitativo.
-        Transformo datos complejos en decisiones claras usando Python, Power BI y estadística aplicada.
+        Transformo datos complejos en decisiones claras usando Python, SQL, Power BI y automatización con IA.
       </p>
       <div class="hero-links">
         <a href="#proyectos" class="btn btn-primary">Ver proyectos →</a>
@@ -650,28 +678,27 @@
         </p>
         <p>
           Hoy construyo ese mismo tipo de soluciones — pero orientadas al análisis de datos:
-          pipelines de extracción, modelos estadísticos, dashboards interactivos en Power BI
-          y simuladores what-if que permiten tomar decisiones con base en evidencia.
-        </p>
-        <p>
-          Mi enfoque diferenciador es el <strong>contexto de industria</strong>: entiendo qué
-          significa un beta de 0.6 en una E&P, por qué el crash de 2020 distorsiona una
-          correlación, y cómo traducir un modelo técnico en algo accionable para quien toma decisiones.
+          pipelines de extracción y consolidación, análisis con SQL, modelos estadísticos,
+          dashboards interactivos en Power BI y automatizaciones que integran IA generativa
+          para convertir datos en decisiones, no solo en tablas.
         </p>
       </div>
       <div class="sobre-stats">
-        <div class="stat-item">
-          <div class="stat-num">1,509</div>
-          <div class="stat-lbl">días de datos analizados en el proyecto 1</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-num">−3.45%</div>
-          <div class="stat-lbl">impacto estimado en cartera ante WTI −10%</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-num">7 / 7</div>
-          <div class="stat-lbl">activos con correlación estadísticamente significativa (p &lt; 0.05)</div>
-        </div>
+        <a href="proyecto1/" class="stat-item stat-link">
+          <div class="stat-proj-num">01</div>
+          <div class="stat-proj-title">Correlación commodities × cartera</div>
+          <div class="stat-lbl">7 / 7 activos con correlación estadísticamente significativa</div>
+        </a>
+        <a href="proyecto2/" class="stat-item stat-link">
+          <div class="stat-proj-num">02</div>
+          <div class="stat-proj-title">Funnel de conversión con SQL</div>
+          <div class="stat-lbl">−54.8% — mayor caída detectada en el embudo de ventas</div>
+        </a>
+        <a href="proyecto3/" class="stat-item stat-link">
+          <div class="stat-proj-num">03</div>
+          <div class="stat-proj-title">Automatización de reportes con IA</div>
+          <div class="stat-lbl">Reporte ejecutivo generado sin intervención manual</div>
+        </a>
       </div>
     </div>
   </section>
@@ -691,7 +718,9 @@
         <div class="skill-cat-title">Análisis y datos</div>
         <div class="skill-tags">
           <span class="skill-tag">Python</span>
+          <span class="skill-tag">SQL</span>
           <span class="skill-tag">pandas</span>
+          <span class="skill-tag">DuckDB</span>
           <span class="skill-tag">numpy</span>
           <span class="skill-tag">scipy</span>
           <span class="skill-tag">statsmodels</span>
@@ -711,13 +740,23 @@
       </div>
 
       <div class="skill-cat">
+        <div class="skill-cat-title">IA y Automatización</div>
+        <div class="skill-tags">
+          <span class="skill-tag">Gemini API</span>
+          <span class="skill-tag">openpyxl</span>
+          <span class="skill-tag">Automatización de reportes</span>
+          <span class="skill-tag">SMTP / Envío automático</span>
+        </div>
+      </div>
+
+      <div class="skill-cat">
         <div class="skill-cat-title">Ingeniería y otros</div>
         <div class="skill-tags">
           <span class="skill-tag">C#</span>
-          <span class="skill-tag neutral">Excel</span>
-          <span class="skill-tag neutral">Git / GitHub</span>
-          <span class="skill-tag neutral">Jupyter</span>
-          <span class="skill-tag neutral">VS Code</span>
+          <span class="skill-tag">Excel</span>
+          <span class="skill-tag">Git / GitHub</span>
+          <span class="skill-tag">Jupyter</span>
+          <span class="skill-tag">VS Code</span>
         </div>
       </div>
 
@@ -785,11 +824,33 @@
         <div class="project-arrow">→</div>
       </a>
 
+      <!-- ════ PROYECTO 3 ════ -->
+      <a href="proyecto3/" class="project-card reveal">
+        <div>
+          <div class="project-num">PROYECTO 03</div>
+          <div class="project-title">Consolidador de Reportes con Resumen Ejecutivo por IA</div>
+          <div class="project-desc">
+            Pipeline en Python que consolida Excels de ventas con formatos inconsistentes entre
+            sucursales, calcula KPIs, detecta alertas automáticamente y genera un resumen
+            ejecutivo redactado por IA — listo para enviarse por correo sin intervención manual.
+          </div>
+          <div class="project-result">→ Detectó automáticamente 2 sucursales con caída fuerte (-24.8% y -21.1%)</div>
+          <div class="project-tags">
+            <span class="project-tag">Python</span>
+            <span class="project-tag">pandas</span>
+            <span class="project-tag">Gemini API</span>
+            <span class="project-tag">openpyxl</span>
+            <span class="project-tag">Automatización</span>
+          </div>
+        </div>
+        <div class="project-arrow">→</div>
+      </a>
+
       <!-- ════ PRÓXIMO PROYECTO ════ -->
       <div class="project-card coming-soon reveal">
         <div>
           <div class="coming-badge">Próximamente</div>
-          <div class="project-title">Proyecto 03 — En desarrollo</div>
+          <div class="project-title">Proyecto 04 — En desarrollo</div>
           <div class="project-desc">
             El siguiente proyecto estará disponible pronto.
           </div>
